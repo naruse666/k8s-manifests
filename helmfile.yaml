@@ -1,0 +1,34 @@
+repositories:
+  - name: fluentd
+    url: https://fluent.github.io/helm-charts
+  - name: bitnami
+    url: registry-1.docker.io/bitnamicharts
+    oci: true
+  # - name: metrics-server
+  #   url: https://kubernetes-sigs.github.io/metrics-server
+releases:
+  # - name: metrics-server
+  #   chart: metrics-server/metrics-server
+  #   namespace: kube-system
+  #   values:
+  #     - args: 
+  #       - --kubelet-insecure-tls
+    
+  - name: fluentd
+    namespace: efk
+    chart: fluentd/fluentd
+    values:
+      -  ./values/fluentd/values.yaml
+  - name: elasticsearch
+    namespace: efk
+    chart: bitnami/elasticsearch
+    version: 21.4.1
+    values:
+      - ./values/elasticsearch/values.yaml
+
+  # - name: kibana
+  #   namespace: efk
+  #   chart: bitnami/kibana
+  #   version: 11.4.1
+  #   values:
+  #     - ./values/kibana/values.yaml
