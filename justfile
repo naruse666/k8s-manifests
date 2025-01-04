@@ -19,5 +19,8 @@ nodeip:
 podip:
 	@kubectl get pod -o=jsonpath='{.items[*].metadata.name}, {.items[*].spec.nodeName}, {.items[*].status.podIP}'
 
+es:
+  @kubectl port-forward -n efk svc/elasticsearch 9200:9200
+
 kibana:
-  @kubectl port-forward -n elastic svc/kibana 8080:5601
+  @kubectl port-forward -n efk svc/kibana 8080:5601

@@ -1,17 +1,55 @@
+variant: elasticsearch7
+
 dashboards:
   enabled: false
   
 fileConfigs:
+  01_sources.conf: |-
+    ## logs from podman
+    <source>
+      @type tail
+      @id in_tail_container_logs
+      @label @KUBERNETES
+      path /var/log/containers/*.log
+      pos_file /var/log/fluentd-containers.log.pos
+      tag kubernetes.*
+      read_from_head true
+      <parse>
+        @type multi_format
+        suppress_type_name true
+        <pattern>
+          format json
+          time_key time
+          time_type string
+          time_format "%Y-%m-%dT%H:%M:%S.%NZ"
+          keep_time_key false
+          suppress_type_name true
+        </pattern>
+        <pattern>
+          format regexp
+          expression /^(?<time>.+) (?<stream>stdout|stderr)( (.))? (?<log>.*)$/
+          time_format '%Y-%m-%dT%H:%M:%S.%NZ'
+          keep_time_key false
+          suppress_type_name true
+        </pattern>
+      </parse>
+      emit_unmatched_lines true
+    </source>
+
+    # expose metrics in prometheus format
+    <source>
+      @type prometheus
+      bind 0.0.0.0
+      port 24231
+      metrics_path /metrics
+    </source>
+
   02_filters.conf: |-
     <label @KUBERNETES>
       <match kubernetes.var.log.containers.fluentd**>
         @type relabel
         @label @FLUENT_LOG
-      </match>
-
-      <match kubernetes.var.log.containers.**_kube-system_**>
-        @type null
-        @id  
+        suppress_type_name true
       </match>
 
       <filter kubernetes.**>
@@ -27,6 +65,30 @@ fileConfigs:
       <match **>
         @type relabel
         @label @DISPATCH
+        suppress_type_name true
+      </match>
+    </label>
+
+  03_dispatch.conf: |-
+    <label @DISPATCH>
+      <filter **>
+        @type prometheus
+        suppress_type_name true
+        <metric>
+          name fluentd_input_status_num_records_total
+          type counter
+          desc The total number of incoming records
+          <labels>
+            tag ${tag}
+            hostname ${hostname}
+          </labels>
+        </metric>
+      </filter>
+
+      <match **>
+        @type relabel
+        @label @OUTPUT
+        suppress_type_name true
       </match>
     </label>
 
@@ -39,7 +101,14 @@ fileConfigs:
         path ""
         user elastic
         password ""
+        logstash_format true
+        logstash_prefix fluentd
         # Don't wait for elastic to start up.
         verify_es_version_at_startup false
+        suppress_type_name true
+        include_tag_key true
+        tag_key @log_name
+        flush_interval 10s
+        time_slice_format %Y%m%d
       </match>
     </label>

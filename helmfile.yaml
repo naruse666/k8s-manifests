@@ -4,21 +4,23 @@ repositories:
   - name: bitnami
     url: registry-1.docker.io/bitnamicharts
     oci: true
-  # - name: metrics-server
-  #   url: https://kubernetes-sigs.github.io/metrics-server
+  - name: metrics-server
+    url: https://kubernetes-sigs.github.io/metrics-server
 releases:
-  # - name: metrics-server
-  #   chart: metrics-server/metrics-server
-  #   namespace: kube-system
-  #   values:
-  #     - args: 
-  #       - --kubelet-insecure-tls
+  - name: metrics-server
+    chart: metrics-server/metrics-server
+    namespace: kube-system
+    values:
+      - args: 
+        - --kubelet-insecure-tls
     
   - name: fluentd
     namespace: efk
     chart: fluentd/fluentd
     values:
       -  ./values/fluentd/values.yaml
+
+  # need spec. colima start --cpu 8 --memory 16 --disk 200
   - name: elasticsearch
     namespace: efk
     chart: bitnami/elasticsearch
@@ -26,9 +28,9 @@ releases:
     values:
       - ./values/elasticsearch/values.yaml
 
-  # - name: kibana
-  #   namespace: efk
-  #   chart: bitnami/kibana
-  #   version: 11.4.1
-  #   values:
-  #     - ./values/kibana/values.yaml
+  - name: kibana
+    namespace: efk
+    chart: bitnami/kibana
+    version: 11.4.1
+    values:
+      - ./values/kibana/values.yaml
