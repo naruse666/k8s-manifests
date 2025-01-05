@@ -4,3 +4,5 @@ elasticsearch:
   hosts:
   - elasticsearch
   port: 9200
+metrics:
+  enabled: false

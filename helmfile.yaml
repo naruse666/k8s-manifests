@@ -6,6 +6,8 @@ repositories:
     oci: true
   - name: metrics-server
     url: https://kubernetes-sigs.github.io/metrics-server
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
 releases:
   - name: metrics-server
     chart: metrics-server/metrics-server
@@ -34,3 +36,9 @@ releases:
     version: 11.4.1
     values:
       - ./values/kibana/values.yaml
+
+  - name: prometheus
+    namespace: efk
+    chart: prometheus-community/prometheus
+    values:
+      - ./values/prometheus/prometheus.yaml

@@ -9,6 +9,8 @@ down:
 # need helm diff plugin
 apply:
   @helmfile apply
+destroy:
+  @helmfile destroy
 
 
 # show node name and ip
@@ -24,3 +26,6 @@ es:
 
 kibana:
   @kubectl port-forward -n efk svc/kibana 8080:5601
+
+prom:
+  @kubectl port-forward -n efk svc/prometheus-server 9090:80
