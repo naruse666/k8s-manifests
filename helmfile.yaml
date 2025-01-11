@@ -1,44 +1,6 @@
-repositories:
-  - name: fluentd
-    url: https://fluent.github.io/helm-charts
-  - name: bitnami
-    url: registry-1.docker.io/bitnamicharts
-    oci: true
-  - name: metrics-server
-    url: https://kubernetes-sigs.github.io/metrics-server
-  - name: prometheus-community
-    url: https://prometheus-community.github.io/helm-charts
-releases:
-  - name: metrics-server
-    chart: metrics-server/metrics-server
-    namespace: kube-system
-    values:
-      - args: 
-        - --kubelet-insecure-tls
-    
-  - name: fluentd
-    namespace: efk
-    chart: fluentd/fluentd
-    values:
-      -  ./values/fluentd/values.yaml
-
-  # need spec. colima start --cpu 8 --memory 16 --disk 200
-  - name: elasticsearch
-    namespace: efk
-    chart: bitnami/elasticsearch
-    version: 21.4.1
-    values:
-      - ./values/elasticsearch/values.yaml
-
-  - name: kibana
-    namespace: efk
-    chart: bitnami/kibana
-    version: 11.4.1
-    values:
-      - ./values/kibana/values.yaml
-
-  - name: prometheus
-    namespace: efk
-    chart: prometheus-community/prometheus
-    values:
-      - ./values/prometheus/prometheus.yaml
+helmfiles:
+  - ./helmfiles/metrics-server/helmfile.yaml
+  - ./helmfiles/fluentd/helmfiles.yaml
+  - ./helmfiles/prometheus/helmfile.yaml
+  - ./helmfiles/elasticsearch/helmfiles.yaml
+  - ./helmfiles/kibana/helmfiles.yaml

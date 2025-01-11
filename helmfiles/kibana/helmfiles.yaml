@@ -1,0 +1,12 @@
+repositories:
+  - name: bitnami
+    url: registry-1.docker.io/bitnamicharts
+    oci: true
+
+releases:
+  - name: kibana
+    namespace: efk
+    chart: bitnami/kibana
+    version: 11.4.1
+    values:
+      - ./values.yaml

@@ -1,0 +1,9 @@
+repositories:
+  - name: fluentd
+    url: https://fluent.github.io/helm-charts
+releases:
+  - name: fluentd
+    namespace: efk
+    chart: fluentd/fluentd
+    values:
+      -  ./values.yaml
